@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Cargotrans – Wallet PRO</title>
+<meta name="description" content="CargoTrans Wallet PRO – Secure CT token wallet. Connect MetaMask, view balances, send CT tokens and manage your assets on the Polygon network.">
+<meta name="keywords" content="CargoTrans, CT Wallet, CT Token, Crypto Wallet, Polygon, MetaMask, ERC20, Blockchain, Digital Assets, Crypto Payments">
+<meta name="author" content="CargoTrans.net">
+<meta name="robots" content="index, follow">
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.9.0/dist/ethers.umd.min.js"></script>
+
+<style>
+:root{
+  --bg:#ffffff;
+  --card:#ffffff;
+  --accent:#000066;
+  --accent-2:#003399;
+  --muted:#57636a;
+  --shadow:0 6px 20px rgba(0,0,0,0.08);
+  --radius:10px;
+  --container:1000px;
+}
+
+html,body{height:100%;margin:0;background:var(--bg);font-family:Tahoma,Arial,sans-serif;color:#222;}
+a{color:var(--accent);text-decoration:none;font-size:13px;transition:color .18s;}
+a:hover{color:var(--accent-2);}
+
+/* TWO-COLUMN CONTAINER */
+.container{
+    max-width:var(--container);
+    margin:30px auto;
+    background:var(--card);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    display:grid; 
+    grid-template-columns:220px 1fr;
+}
+
+/* SIDEBAR */
+.sidebar {
+    padding:25px 0 25px 25px;
+    background:#fcfcfc;
+    border-right:1px solid #e9f1fa;
+    border-radius: var(--radius) 0 0 var(--radius);
+    min-height:100vh;
+    position:sticky;
+    top:0;
+}
+.sidebar .logo-wrap{margin-bottom:25px;}
+.sidebar .logo-wrap img{width:160px;}
+.sidebar .nav{display:flex;flex-direction:column;}
+.sidebar .nav a{font-size:13px;padding:8px 10px;margin-bottom:2px;border-radius:4px;color:var(--accent);}
+.sidebar .nav a:hover{background:#eef6ff;color:var(--accent-2);}
+.sidebar .nav a.active{background:#eef6ff;color:var(--accent-2);font-weight:bold;}
+
+/* TOPBAR */
+.topbar{display:flex; align-items:center; gap:12px; margin-bottom:20px; border-bottom:1px solid #eee; padding-bottom:10px;}
+.nav-top{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+.nav-top a{font-size:13px;color:var(--muted);padding:6px 8px;border-radius:8px;transition:background .18s,color .18s;}
+.nav-top a:hover{background:#eef6ff;color:var(--accent-2);}
+
+/* CONTENT PART LEFT */
+.content{
+    padding:20px;
+    display:flex;
+    justify-content:flex-start;
+}
+.main{
+    width:100%;
+    max-width:500px;
+}
+
+/* WALLET PRO */
+.form-box{background:#fcfcfc;padding:20px;border-radius:12px;border:1px solid #eef6ff;box-shadow:0 2px 8px rgba(0,0,0,0.05);margin-bottom:20px;}
+h2{
+  margin:0 0 15px 0;
+  color:var(--accent);
+  font-size:22px; 
+  text-align:left;
+}
+
+h3{margin:15px 0 8px 0;font-size:16px;color:var(--accent);}
+.button-group{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-start;margin-top:10px;}
+.button{padding:10px 20px;border:none;border-radius:8px;background:var(--accent);color:#fff;font-weight:bold;cursor:pointer;transition:all 0.2s;}
+.button:hover{background:var(--accent-2);transform:translateY(-2px);}
+input{width:50%;padding:8px;margin:5px 0;border-radius:6px;border:1px solid #ccc;}
+
+/* COPY BUTTON */
+.copy-btn{padding:5px 10px;margin-left:8px;border:none;border-radius:4px;background:var(--accent);color:#fff;cursor:pointer;}
+.copy-btn:hover{background:var(--accent-2);}
+
+/* TOKEN INFO */
+.token-info{background:#fff;border:1px solid #eef6ff;padding:12px;border-radius:8px;margin-bottom:15px;font-size:13px;text-align:left;}
+.token-info strong{color:var(--accent);}
+.token-info a{color:var(--accent);text-decoration:none;}
+.token-info a:hover{color:var(--accent-2);}
+
+/* TRANSACTIONS LIST */
+#txList{list-style:none;padding-left:0;margin-top:10px;font-size:13px;color:#222;}
+
+/* FOOTER */
+.foot{border-top:1px solid #e9f1fa;padding:12px 20px;font-size:12px;color:#57636a;display:flex;justify-content:space-between;}
+
+/* ENLARGED AND EMPHASIZED BALANCES */
+#matic{
+  font-size:15px; 
+  font-weight:600;
+}
+
+#token{
+  font-size:17px; 
+  font-weight:800;
+  color:#000066; 
+}
+
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<aside class="sidebar">
+    <div class="logo-wrap">
+        <a href="https://www.cargotrans.net/default.asp">
+            <img src="https://www.cargotrans.net/images/cargoNetLogo.gif" alt="CargoNet logo">
+        </a>
+    </div>
+
+    <nav class="nav">
+        <a href="https://www.cargotrans.net/layout1.asp?stran=CTHash">Wallet Preparation</a>
+        <a href="https://www.cargotrans.net/layout1.asp?stran=CT_Wallet.html" class="active">Log in to CT Wallet</a>
+        <a href="https://www.cargotrans.net/layout1.asp?stran=CT_Cargotrans_Pre-ICO">Buy CT Tokens</a>
+        <a href="https://www.cargotrans.net/layout1.asp?stran=Cargotrans_Token_Fundraising.io">Bonus Explanation</a>
+        <a href="https://www.cargotrans.net/layout1.asp?stran=CT_Activity_Rewards_Program.io">Activity Program</a>
+        <a href="https://www.cargotrans.net/layout1.asp?stran=contacts">Contact & Support</a>
+    </nav>
+
+    <div class="token-info" style="margin-top:25px;">
+        <div>Token: <strong>Cargotrans (CT)</strong></div>
+        <div>Supply: <strong>100,000,000</strong> • Decimals: <strong>8</strong></div>
+        <div>Network: <strong>Polygon (MATIC)</strong></div>
+        <small>View on <a href="https://polygonscan.com/token/0xf95cae9962cfe3dd40b2a96600fafa02f6f846e4" target="_blank">Polygonscan</a></small>
+    </div>
+    <div style="margin-top:15px;font-size:12px;color:var(--muted);text-align:left;">
+        CT tokens are utility tokens for CargoNet and TransNet. Bonuses are automatically applied.
+    </div>
+</aside>
+
+<div class="content">
+<div class="main">
+
+<div class="topbar">
+    <nav class="nav-top">
+        <a href="https://www.cargotrans.net/default.asp">Home</a>
+        <a href="https://www.cargotrans.net/layout1.asp?stran=CT_Cargotrans_Pre-ICO">CT Hash</a>
+        <a href="https://www.cargotrans.net/layout1.asp?stran=Cargotrans_Token_Fundraising.io">CT Utility Tokens</a>
+        <a href="https://www.cargotrans.net/layout1.asp?stran=CT_Activity_Rewards_Program.io">Activity Program</a>
+    </nav>
+</div>
+
+<div class="form-box">
+<h2>CargoTrans Wallet PRO</h2>
+
+<div class="button-group">
+<button class="button" id="connectBtn">Connect MetaMask</button>
+<button class="button" id="logoutBtn" style="display:none;background:#ef5350;">Logout</button>
+</div>
+
+<p id="addr" style="margin-top:10px;">Wallet: – 
+<button class="copy-btn" id="copyBtn" style="display:none;">Copy</button></p>
+<p id="matic">POLYGON: –</p>
+<p id="token">CT Tokens: –</p>
+
+<h3>Send CT Tokens</h3>
+<input id="to" placeholder="Recipient Address">
+<input id="amount" placeholder="Amount">
+<div class="button-group">
+<button class="button" id="sendBtn">Send</button>
+</div>
+
+<h3>Swap CT ↔ POL</h3>
+<div class="button-group">
+<button class="button" onclick="window.open('https://dapp.quickswap.exchange/swap','_blank')">Swap Token</button>
+</div>
+
+<h3>Transaction History</h3>
+<ul id="txList">
+<li>Log in to view transactions...</li>
+</ul>
+
+</div>
+
+</div>
+</div>
+
+<div class="foot">
+    <div>© 2001–2025 Cargotrans • All rights reserved</div>
+    <div><small>Secure payment via PayPal • Delivery on Polygon</small></div>
+</div>
+
+<script>
+const TOKEN_ADDRESS="0xf95caE9962cfe3DD40b2a96600fAfa02f6F846e4";
+const TOKEN_DECIMALS=8;
+const ERC20_ABI=[
+"function balanceOf(address) view returns (uint256)",
+"function transfer(address to, uint amount) returns (bool)",
+"function symbol() view returns (string)"
+];
+
+let provider, signer, user, token;
+const connectBtn=document.getElementById("connectBtn");
+const logoutBtn=document.getElementById("logoutBtn");
+const sendBtn=document.getElementById("sendBtn");
+const copyBtn=document.getElementById("copyBtn");
+
+connectBtn.onclick=connect;
+logoutBtn.onclick=logout;
+sendBtn.onclick=sendToken;
+copyBtn.onclick=copyAddress;
+
+function formatSI(value){
+  return Number(value).toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+async function connect(){
+  if(!window.ethereum){ alert("Please install MetaMask"); return; }
+  provider=new ethers.BrowserProvider(window.ethereum);
+  await provider.send("eth_requestAccounts",[]);
+  signer=await provider.getSigner();
+  user=await signer.getAddress();
+  await window.ethereum.request({ method:"wallet_switchEthereumChain", params:[{ chainId:"0x89" }]} );
+  token=new ethers.Contract(TOKEN_ADDRESS,ERC20_ABI,signer);
+
+  document.getElementById("addr").childNodes[0].nodeValue="Wallet: "+user;
+  copyBtn.style.display="inline-block";
+
+  const matic=await provider.getBalance(user);
+document.getElementById("matic").innerText =
+  "POLYGON: " + formatSI(ethers.formatEther(matic));
+
+  const raw=await token.balanceOf(user);
+  const sym=await token.symbol();
+document.getElementById("token").innerText =
+  "CT Tokens: " + formatSI(ethers.formatUnits(raw,TOKEN_DECIMALS)) + " " + sym;
+
+
+  connectBtn.style.display="none";
+  logoutBtn.style.display="block";
+
+  fetchTransactionsList();
+}
+
+function logout(){
+  provider=null; signer=null; token=null; user=null;
+  document.getElementById("addr").childNodes[0].nodeValue="Wallet: –";
+  copyBtn.style.display="none";
+  document.getElementById("matic").innerText="POLYGON: –";
+  document.getElementById("token").innerText="CT Tokens: –";
+  connectBtn.style.display="block";
+  logoutBtn.style.display="none";
+  document.getElementById("txList").innerHTML="<li>Log in to view transactions...</li>";
+}
+
+async function sendToken(){
+  const to=document.getElementById("to").value;
+  const amt=document.getElementById("amount").value;
+  if(!to||!amt){ alert("Enter address and amount"); return; }
+  const tx=await token.transfer(to,ethers.parseUnits(amt,TOKEN_DECIMALS));
+  alert("Confirm the transaction in MetaMask...");
+  await tx.wait();
+  alert("Transfer successful ✅");
+  connect();
+}
+
+function copyAddress(){
+  if(user){ navigator.clipboard.writeText(user); alert("Address copied ✅"); }
+}
+
+async function fetchTransactionsList(){
+  if(!token || !user) return;
+  const txList=document.getElementById("txList");
+  txList.innerHTML="";
+  try{
+    const transferEvent=token.filters.Transfer(user,null);
+    const logs=await token.queryFilter(transferEvent,-10000);
+    if(logs.length===0){ txList.innerHTML="<li>No transactions found.</li>"; return; }
+    logs.forEach(l=>{
+      const val=parseFloat(ethers.formatUnits(l.args.value,TOKEN_DECIMALS));
+      const to=l.args.to;
+      const date=new Date().toLocaleDateString(); 
+      const li=document.createElement("li");
+      li.innerText=`${date} → ${to} : ${val} CT`;
+      txList.appendChild(li);
+    });
+  }catch(e){ console.log("Transaction error:",e); }
+}
+</script>
+
+</div>
+</body>
+</html>
